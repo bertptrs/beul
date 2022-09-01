@@ -1,0 +1,21 @@
+[package]
+name = "beul"
+version = "0.1.0"
+# Edition 2021 is not available in MSRV
+edition = "2018"
+license = "MIT OR Apache-2.0"
+description = "It executes futures"
+repository = "https://github.com/bertptrs/beul/"
+authors = [
+    "Bert Peters",
+]
+categories = [
+    "asynchronous",
+    "development-tools",
+]
+keywords = [
+    "futures",
+    "async",
+    "executor",
+    "runtime",
+]
