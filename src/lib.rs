@@ -26,15 +26,36 @@ use std::task::Wake;
 use std::task::Waker;
 
 #[derive(Default)]
-struct CondvarWake(Condvar);
+struct CondvarWake {
+    park: Condvar,
+    awoken: Mutex<bool>,
+}
+
+impl CondvarWake {
+    pub fn park(&self) {
+        let mut guard = self.awoken.lock().unwrap_or_else(PoisonError::into_inner);
+
+        // Until we are awoken, we can park on the condvar. This also handles the case where we're
+        // awoken while we're actually polling.
+        while !*guard {
+            guard = self
+                .park
+                .wait(guard)
+                .unwrap_or_else(PoisonError::into_inner);
+        }
+
+        *guard = false;
+    }
+}
 
 impl Wake for CondvarWake {
     fn wake(self: Arc<Self>) {
-        self.0.notify_one()
+        self.wake_by_ref()
     }
 
     fn wake_by_ref(self: &Arc<Self>) {
-        self.0.notify_one()
+        *self.awoken.lock().unwrap_or_else(PoisonError::into_inner) = true;
+        self.park.notify_one();
     }
 }
 
@@ -48,14 +69,10 @@ pub fn execute<T>(f: impl Future<Output = T>) -> T {
 
     let mut context = Context::from_waker(&waker);
 
-    let mutex = Mutex::new(());
-    // Cannot panic but avoids generating the unwrap code
-    let mut guard = mutex.lock().unwrap_or_else(PoisonError::into_inner);
-
     loop {
         match pinned.as_mut().poll(&mut context) {
             Poll::Ready(value) => return value,
-            Poll::Pending => guard = wake.0.wait(guard).unwrap_or_else(PoisonError::into_inner),
+            Poll::Pending => wake.park(),
         }
     }
 }
