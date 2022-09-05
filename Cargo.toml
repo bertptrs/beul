@@ -6,6 +6,7 @@ edition = "2018"
 license = "MIT OR Apache-2.0"
 description = "It executes futures"
 repository = "https://github.com/bertptrs/beul/"
+rust-version = "1.51"
 authors = [
     "Bert Peters",
 ]

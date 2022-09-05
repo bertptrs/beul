@@ -14,7 +14,6 @@ jobs:
     strategy:
       matrix:
         rust:
-          - "1.51" # minimum stable rust version
           - stable
           - beta
     steps:
@@ -46,6 +45,24 @@ jobs:
         with:
           command: clippy
           args: --all-targets -- -D warnings
+
+  # Reduced build for the Minimum Supported Rust Version. It does not include the lints as some of
+  # them are out-of-date and result in false positives on the codebase, e.g. mutex_atomic.
+  msrv:
+    name: MSRV
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: "1.51"
+          override: true
+
+      - uses: actions-rs/cargo@v1
+        with:
+          command: test
 
   miri:
     name: Miri
