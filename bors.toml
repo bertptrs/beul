@@ -1,0 +1,6 @@
+status = [
+    'MSRV',
+    'tests (stable)',
+    'tests (beta)',
+    'Miri',
+]

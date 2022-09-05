@@ -52,3 +52,27 @@ fn test_threaded_future() {
     // Future should be polled twice, once initially and once after the wake-up
     assert_eq!(beul::execute(future), 2);
 }
+
+#[test]
+fn test_self_waking_futures() {
+    struct SelfWakingFuture(bool);
+
+    impl Future for SelfWakingFuture {
+        type Output = ();
+
+        fn poll(mut self: std::pin::Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Self::Output> {
+            if self.0 {
+                Poll::Ready(())
+            } else {
+                // Next time we complete
+                self.0 = true;
+                // Request to be woken up
+                cx.waker().wake_by_ref();
+
+                Poll::Pending
+            }
+        }
+    }
+
+    beul::execute(SelfWakingFuture(false));
+}
