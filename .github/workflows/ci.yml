@@ -19,32 +19,15 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - uses: actions-rs/toolchain@v1
+      - uses: dtolnay/rust-toolchain@v1
         with:
-          profile: minimal
           toolchain: ${{ matrix.rust }}
-          override: true
           components: rustfmt, clippy
 
-      - uses: actions-rs/cargo@v1
-        with:
-          command: build
-          # --all-targets ensures that we also build tests
-          args: --all-features --all-targets
-
-      - uses: actions-rs/cargo@v1
-        with:
-          command: test
-
-      - uses: actions-rs/cargo@v1
-        with:
-          command: fmt
-          args: --all -- --check
-
-      - uses: actions-rs/cargo@v1
-        with:
-          command: clippy
-          args: --all-targets -- -D warnings
+      - run: cargo build --all-targets
+      - run: cargo test
+      - run: cargo fmt --all -- --check
+      - run: cargo clippy --all-targets -- -D warnings
 
   # Reduced build for the Minimum Supported Rust Version. It does not include the lints as some of
   # them are out-of-date and result in false positives on the codebase, e.g. mutex_atomic.
@@ -54,15 +37,11 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - uses: actions-rs/toolchain@v1
+      - uses: dtolnay/rust-toolchain@v1
         with:
-          profile: minimal
           toolchain: "1.51"
-          override: true
 
-      - uses: actions-rs/cargo@v1
-        with:
-          command: test
+      - run: cargo test
 
   miri:
     name: Miri
@@ -71,14 +50,9 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - uses: actions-rs/toolchain@v1
+      - uses: dtolnay/rust-toolchain@v1
         with:
-          profile: minimal
           toolchain: nightly
-          override: true
           components: miri, rust-src
 
-      - uses: actions-rs/cargo@v1
-        with:
-          command: miri
-          args: test
+      - run: cargo miri test
