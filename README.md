@@ -1,6 +1,7 @@
 # Beul
 
-Beul is a minimalistic futures executor. No dependencies, no unsafe rust.
+Beul is a minimalistic futures executor. No dependencies, no unsafe rust. It simply executes
+futures.
 
 ## Usage
 
@@ -12,8 +13,8 @@ beul::execute(async {});
 
 ### Backwards compatibility
 
-This crate requires at least Rust 1.51, due to its reliance on [Wake]. Increases in this version
-will be considered breaking changes. This crate follows semantic versioning.
+This crate requires at least Rust 1.68, due to its reliance on [std::pin::pin!]. Increases in this
+version will be considered breaking changes. This crate follows semantic versioning.
 
 ### Limitations
 
@@ -37,4 +38,4 @@ work by you, as defined in the Apache-2.0 license, shall be dual licensed as abo
 additional terms or conditions.
 
 [Tokio]: https://tokio.rs/
-[Wake]: https://doc.rust-lang.org/std/task/trait.Wake.html
+[std::pin::pin!]: https://doc.rust-lang.org/std/pin/macro.pin.html
