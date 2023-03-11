@@ -6,6 +6,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Use dynamic dispatch internally to save on code gen. External API unchanged.
+- No longer heap-allocate futures.
+
+### Breaking
+
+- Minimum supported Rust version bumped to 1.68.
+
 ## [0.1.1] - 2022-09-05
 
 ### Fixed

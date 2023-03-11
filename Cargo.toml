@@ -1,12 +1,11 @@
 [package]
 name = "beul"
 version = "0.1.1"
-# Edition 2021 is not available in MSRV
-edition = "2018"
+edition = "2021"
 license = "MIT OR Apache-2.0"
 description = "It executes futures"
 repository = "https://github.com/bertptrs/beul/"
-rust-version = "1.51"
+rust-version = "1.68"
 authors = [
     "Bert Peters",
 ]

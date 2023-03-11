@@ -16,6 +16,7 @@
 //! ```
 #![forbid(unsafe_code)]
 use std::future::Future;
+use std::pin::Pin;
 use std::sync::Arc;
 use std::sync::Condvar;
 use std::sync::Mutex;
@@ -60,10 +61,15 @@ impl Wake for CondvarWake {
 }
 
 /// Block on specified [`Future`].
+///
+/// The future will be polled until completion on the current thread.
 pub fn execute<T>(f: impl Future<Output = T>) -> T {
-    // TODO: replace with std::pin::pin once it gets stabilized
-    let mut pinned = Box::pin(f);
+    // Use dynamic dispatch to save on codegen
+    poll(std::pin::pin!(f))
+}
 
+/// Poll a future until completion.
+fn poll<T>(mut pinned: Pin<&mut dyn Future<Output = T>>) -> T {
     let wake = Arc::new(CondvarWake::default());
     let waker = Waker::from(Arc::clone(&wake));
 
