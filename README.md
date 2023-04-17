@@ -3,6 +3,8 @@
 Beul is a minimalistic futures executor. No dependencies, no unsafe rust. It simply executes
 futures.
 
+"Beul" is Dutch for executioner. It's a pun.
+
 ## Usage
 
 Simply call `execute` with your future:
@@ -14,7 +16,8 @@ beul::execute(async {});
 ### Backwards compatibility
 
 This crate requires at least Rust 1.68, due to its reliance on [std::pin::pin!]. Increases in this
-version will be considered breaking changes. This crate follows semantic versioning.
+version will be considered breaking changes and will be avoided if possible. The minimum supported
+Rust version will only be bumped in major or minor versions. This crate follows semantic versioning.
 
 ### Limitations
 
